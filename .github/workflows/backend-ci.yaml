@@ -1,0 +1,39 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - "backend/**"
+  pull_request:
+    paths:
+      - "backend/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Sync dependencies
+        run: uv sync --frozen --all-extras
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: MyPy type-check
+        run: uv run mypy -m app
+
+      - name: Pytest
+        run: uv run -m pytest

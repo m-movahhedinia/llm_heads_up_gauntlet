@@ -1,0 +1,58 @@
+project-root/
+├── frontend/                # React web UI
+│   ├── public/              # Static assets
+│   ├── src/                 # React source code
+│   │   ├── components/      # Reusable UI components (Leaderboard, Config sliders, etc.)
+│   │   ├── pages/           # Page-level views (HeadsUp, FlipTheScript, Dashboard)
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── services/        # API calls to backend
+│   │   └── styles/          # CSS/SCSS modules or Tailwind config
+│   ├── tests/               # Jest/React Testing Library unit tests
+│   ├── package.json
+│   └── vite.config.js       # or webpack config
+│
+├── backend/                 # Python backend (FastAPI + uv)
+│   ├── app/                 # Main application code
+│   │   ├── __init__.py
+│   │   ├── api/             # FastAPI endpoints (game orchestration, leaderboard, configs)
+│   │   ├── core/            # Core logic (game engine, orchestration)
+│   │   ├── agents/          # LLM agents (reference, guessing, hinting, judge)
+│   │   ├── knowledge/       # RAG, LLMLingua, LangChain/LangGraph pipelines
+│   │   ├── evaluation/      # Metrics, scoring, Grafana integration
+│   │   ├── infrastructure/  # DB models, registry, Terraform hooks
+│   │   └── utils/           # Shared helpers (logging, config parsing)
+│   ├── tests/               # Pytest unit + integration tests
+│   │   ├── test_api.py
+│   │   ├── test_agents.py
+│   │   ├── test_game_engine.py
+│   │   └── ...
+│   ├── pyproject.toml       # uv-compatible project config
+│   ├── uv.lock              # uv lockfile
+│   └── README.md
+│
+├── infra/                   # Infrastructure as Code
+│   ├── terraform/           # Terraform configs (Grafana, DB, API Gateway, etc.)
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── outputs.tf
+│   │   └── tests/           # Infra tests (Terratest, Checkov, tfsec)
+│   ├── docker/              # Dockerfiles for backend/frontend
+│   │   ├── Dockerfile.backend
+│   │   └── Dockerfile.frontend
+│   └── k8s/                 # Kubernetes manifests (optional)
+│
+├── docs/                    # Documentation
+│   ├── architecture.md      # System design overview
+│   ├── setup.md             # Dev setup instructions
+│   └── api.md               # API reference
+│
+├── .github/                 # GitHub Actions CI/CD workflows
+│   ├── workflows/
+│   │   ├── backend-tests.yml
+│   │   ├── frontend-tests.yml
+│   │   ├── infra-tests.yml
+│   │   └── deploy.yml
+│
+├── docker-compose.yml       # Local dev orchestration (frontend + backend + DB + Grafana)
+├── .gitignore
+└── README.md                # Project overview

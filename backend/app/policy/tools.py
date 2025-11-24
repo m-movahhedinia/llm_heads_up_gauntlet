@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+"""
+Author: mansour
+
+Description:
+
+"""
+from langchain_core.tools import tool
+from app.policy.schemas import PolicyUpdateInput, PolicyUpdateOutput
+from app.policy.learner import propose_policy_update
+
+@tool
+def update_policy_tool(input_: PolicyUpdateInput) -> PolicyUpdateOutput:
+    """Propose a small, safe update to the current policy based on round metrics and memory signals."""
+    return propose_policy_update(input_)

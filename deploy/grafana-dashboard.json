@@ -1,0 +1,71 @@
+{
+  "id": null,
+  "title": "WordGame Backend Dashboard",
+  "tags": ["wordgame", "agents"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Rounds Played",
+      "targets": [
+        {
+          "expr": "rounds_total",
+          "legendFormat": "{{mode}}"
+        }
+      ],
+      "datasource": "Prometheus",
+      "id": 1
+    },
+    {
+      "type": "graph",
+      "title": "Agent Step Latency (ms)",
+      "targets": [
+        {
+          "expr": "latency_ms",
+          "legendFormat": "{{step}}"
+        }
+      ],
+      "datasource": "Prometheus",
+      "id": 2
+    },
+    {
+      "type": "graph",
+      "title": "Agent Steps Executed",
+      "targets": [
+        {
+          "expr": "agent_step_total",
+          "legendFormat": "{{step}}"
+        }
+      ],
+      "datasource": "Prometheus",
+      "id": 3
+    },
+    {
+      "type": "graph",
+      "title": "Errors by Step",
+      "targets": [
+        {
+          "expr": "errors_total",
+          "legendFormat": "{{step}} {{type}}"
+        }
+      ],
+      "datasource": "Prometheus",
+      "id": 4
+    },
+    {
+      "type": "graph",
+      "title": "Tokens Used",
+      "targets": [
+        {
+          "expr": "tokens_used",
+          "legendFormat": "{{step}}"
+        }
+      ],
+      "datasource": "Prometheus",
+      "id": 5
+    }
+  ]
+}

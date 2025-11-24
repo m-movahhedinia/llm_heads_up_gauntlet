@@ -1,0 +1,11 @@
+uv run python -m pytest
+uv run coverage run -m pytest
+uv run coverage report -m
+python -m app.api.main
+uv run alembic init migrations
+uv run alembic revision --autogenerate -m "Initial schema"
+uv run alembic upgrade head
+uv run python -m backend.app
+docker compose up --build
+docker build -t wordgame-backend .
+
