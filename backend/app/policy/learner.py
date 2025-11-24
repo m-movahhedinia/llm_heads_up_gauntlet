@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from langchain.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
+
 from langchain.output_parsers import PydanticOutputParser
+from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda
-from app.policy.schemas import Policy, PolicyUpdateInput, PolicyUpdateOutput
+from langchain_openai import ChatOpenAI
+
+from app.policy.schemas import PolicyUpdateInput, PolicyUpdateOutput
 
 UpdatePrompt = PromptTemplate(
     template=(
@@ -28,24 +29,28 @@ UpdatePrompt = PromptTemplate(
     input_variables=["policy_json", "accuracy", "calibration", "creativity", "efficiency", "signals"],
 )
 
+
 def build_policy_learner():
     llm = ChatOpenAI(model="gpt-4o-mini")
     parser = PydanticOutputParser(pydantic_object=PolicyUpdateOutput)
     chain = (
         # Pre-format inputs
-        RunnableLambda(lambda x: {
-            "policy_json": x["policy"].model_dump_json(),
-            "accuracy": x["accuracy"],
-            "calibration": x["calibration"],
-            "creativity": x["creativity"],
-            "efficiency": x["efficiency"],
-            "signals": x.get("summary_signals", "") or ""
-        })
+        RunnableLambda(
+            lambda x: {
+                "policy_json": x["policy"].model_dump_json(),
+                "accuracy": x["accuracy"],
+                "calibration": x["calibration"],
+                "creativity": x["creativity"],
+                "efficiency": x["efficiency"],
+                "signals": x.get("summary_signals", "") or "",
+            }
+        )
         | UpdatePrompt
         | llm
         | parser
     )
     return chain
+
 
 def propose_policy_update(inp: PolicyUpdateInput) -> PolicyUpdateOutput:
     chain = build_policy_learner()

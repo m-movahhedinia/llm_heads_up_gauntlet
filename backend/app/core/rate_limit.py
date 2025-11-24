@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
+
 import time
 from collections import defaultdict
+
 
 class RateLimiter:
     def __init__(self, window_s=60, max_requests=60):

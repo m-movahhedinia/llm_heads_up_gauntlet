@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
 
-from sqlmodel import SQLModel
-from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel
+from sqlmodel.ext.asyncio.session import AsyncSession
+
 from .config import settings
 
 ENGINE = create_async_engine(settings.database_url, echo=settings.debug)

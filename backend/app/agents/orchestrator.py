@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from langchain_openai import ChatOpenAI
+
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.runnables import RunnableLambda
+
 from app.agents.llm_provider import ProviderFactory
+
 
 def build_orchestrator(provider_name: str):
     llm = ProviderFactory.get_provider(provider_name)
@@ -24,8 +25,9 @@ def build_orchestrator(provider_name: str):
         input_variables=["summary"],
     )
     # Post-process to ensure a valid token
-    normalize = RunnableLambda(lambda x: x.content.strip().lower().split()[0]
-    if hasattr(x, "content") else str(x).strip().lower())
-    
+    normalize = RunnableLambda(
+        lambda x: x.content.strip().lower().split()[0] if hasattr(x, "content") else str(x).strip().lower()
+    )
+
     chain = router_prompt | llm | normalize
     return chain

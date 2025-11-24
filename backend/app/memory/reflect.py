@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from typing import List
+
 from langchain_core.prompts.prompt import PromptTemplate
-from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnableLambda
+from langchain_openai import ChatOpenAI
+
 from app.memory.schemas import MemorySummary
 
 ReflectPrompt = PromptTemplate(
@@ -20,16 +20,19 @@ ReflectPrompt = PromptTemplate(
     input_variables=["signals"],
 )
 
+
 def build_reflection_chain():
     llm = ChatOpenAI(model="gpt-4o-mini")
     chain = ReflectPrompt | llm | RunnableLambda(lambda x: getattr(x, "content", str(x)))
     return chain
 
+
 def parse_summary(text: str) -> MemorySummary:
     import json
+
     try:
         start, end = text.find("{"), text.rfind("}")
-        payload = json.loads(text[start:end+1])
+        payload = json.loads(text[start : end + 1])
         return MemorySummary(
             word="",
             key_signals=payload.get("key_signals", []),

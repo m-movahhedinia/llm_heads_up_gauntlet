@@ -32,6 +32,7 @@ class ProviderSettings(BaseModel):
 
 class Settings(BaseModel):
     """Application settings."""
+
     app_name: str = Field(default="Multi-Agent Game Backend")
     environment: str = Field(default=os.getenv("ENVIRONMENT", "development"))
     debug: bool = Field(default=os.getenv("DEBUG", "true").lower() == "true")

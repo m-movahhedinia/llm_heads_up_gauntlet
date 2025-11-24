@@ -1,33 +1,20 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
 
-from app.knowledge.embeddings import get_embedding_provider
-from app.knowledge.vector_store import VectorStoreFactory
-from langchain_core.documents import Document
 from hashlib import sha256
-from typing import List
-from langchain_community.document_loaders import WikipediaLoader
-from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.chains import RetrievalQA
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts.prompt import PromptTemplate
-from app.core.config import settings
-from typing import List
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain_pinecone import PineconeVectorStore
-from langchain_openai import ChatOpenAI
+
 from langchain_core.documents import Document
-from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+from langchain_core.prompts.prompt import PromptTemplate
+from langchain_core.runnables import RunnableLambda, RunnablePassthrough
+
+from app.agents.llm_provider import ProviderFactory
 from app.knowledge.embeddings import get_embedding_provider
 from app.knowledge.vector_store import VectorStoreFactory
-from app.agents.llm_provider import ProviderFactory
+
 
 # TODO Unify these functions into a configurable single one.
 def build_faiss_rag_hint_chain(model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
@@ -47,23 +34,25 @@ def build_faiss_rag_hint_chain(model_name: str = "sentence-transformers/all-Mini
         ),
         input_variables=["context", "question"],
     )
-    
+
     # Compose: retriever provides context, passthrough carries question, prompt -> llm
     chain = (
         {"context": retriever, "question": RunnablePassthrough()}
         | hint_prompt
         | llm
-        | RunnableLambda(lambda x: getattr(x, "content", str(x))) # TODO Replace with an output parser
+        | RunnableLambda(lambda x: getattr(x, "content", str(x)))  # TODO Replace with an output parser
     )
     return chain
 
 
-def build_pinecone_rag_hint_chain(index_name: str, texts: List[str], model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
+def build_pinecone_rag_hint_chain(
+    index_name: str, texts: list[str], model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
+):
     embeddings = get_embedding_provider(model_name=model_name)
     store = VectorStoreFactory.create_pinecone(index_name, embeddings)
     retriever = store.as_retriever(search_kwargs={"k": 3})
     llm = ProviderFactory.get_provider("huggingface")
-    
+
     hint_prompt = PromptTemplate(
         template=(
             "You are generating a concise hint for the target concept.\n"
@@ -83,7 +72,7 @@ def build_pinecone_rag_hint_chain(index_name: str, texts: List[str], model_name:
     return chain
 
 
-def build_docs_rag_hint_chain(docs: List[Document], model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
+def build_docs_rag_hint_chain(docs: list[Document], model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
     # Sometimes you already have Document objects; build FAISS from them.
     embeddings = get_embedding_provider(model_name=model_name)
     # TODO Make configurable
@@ -100,7 +89,7 @@ def build_docs_rag_hint_chain(docs: List[Document], model_name: str = "sentence-
         ),
         input_variables=["context", "question"],
     )
-    
+
     chain = (
         {"context": retriever, "question": RunnablePassthrough()}
         | hint_prompt
@@ -111,24 +100,24 @@ def build_docs_rag_hint_chain(docs: List[Document], model_name: str = "sentence-
 
 
 # TODO Remove this
-def demo_rag_debug() -> List[Document]:
+def demo_rag_debug() -> list[Document]:
     # Create vector store or vector db
     embeddings = get_embedding_provider()
     vector_store = VectorStoreFactory.create_faiss(embeddings)
-    
+
     # Add documents
     docs = [
         Document(page_content="quantum mechanics", metadata={"role": "subject"}),
         Document(page_content="entropy", metadata={"role": "subject"}),
-        Document(page_content="neural networks", metadata={"role": "subject"})
+        Document(page_content="neural networks", metadata={"role": "subject"}),
     ]
-    
+
     ids = [sha256(doc.page_content.lower().strip().encode()).hexdigest() for doc in docs]
-    
+
     _ = vector_store.add_documents(documents=docs, ids=ids)
-    
+
     retriever = vector_store.as_retriever(search_kwargs={"k": 2})
-    
+
     # Retrieve documents
     results = retriever.similarity_search("physics", k=2, filter={"role": "subject"})
     return results

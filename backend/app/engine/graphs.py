@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
@@ -15,32 +14,35 @@ print(state.metrics.dict())
 #   "feedback": "Accuracy: correct | Calibration: 0.90 ..."
 # }
 """
-from langgraph.graph import StateGraph, END
-from app.engine.state import RoundState, RoundConfig, GameMode
-from app.engine.nodes import node_compress, build_hint_chain, build_guess_chain, build_judge_chain
-from langgraph.graph import StateGraph, END
-from app.engine.state import RoundState
-from app.engine.nodes import node_rag_hint, node_compress_hints, node_inject_noise
-from app.evaluation.schemas import RoundEvaluationInput
-from app.evaluation.metrics import evaluate_round
-from app.evaluation.exporter import to_prometheus_text
-from app.evaluation.schemas import Guess
-from langgraph.graph import StateGraph, END
-from app.engine.state import RoundState, RoundConfig
-from app.agents.hint_agent import build_hint_agent
+
+from langgraph.graph import END, StateGraph
+
 from app.agents.guess_agent import build_guess_agent
+from app.agents.hint_agent import build_hint_agent
 from app.agents.judge_agent import build_judge_agent
 from app.agents.orchestrator import build_orchestrator
+from app.engine.nodes import (
+    build_guess_chain,
+    build_hint_chain,
+    build_judge_chain,
+    node_compress,
+    node_compress_hints,
+    node_guess_agent,
+    node_hint_agent,
+    node_inject_noise,
+    node_judge_agent,
+    node_memory_read_for_hint,
+    node_memory_summarize,
+    node_memory_write,
+    node_policy_learn,
+    node_rag_hint,
+)
+from app.engine.state import GameMode, RoundConfig, RoundState
+from app.evaluation.exporter import to_prometheus_text
+from app.evaluation.metrics import evaluate_round
+from app.evaluation.schemas import Guess, RoundEvaluationInput
 from app.evaluation.tool import evaluate_round_tool
-from app.evaluation.schemas import RoundEvaluationInput
-from app.engine.state import GameMode
-from langgraph.graph import StateGraph, END
-from app.engine.state import RoundState, RoundConfig
-from app.engine.nodes import node_memory_write, node_memory_summarize, node_memory_read_for_hint
-from langgraph.graph import StateGraph, END
-from app.engine.state import RoundState
-from app.engine.nodes import (node_hint_agent, node_guess_agent, node_judge_agent, node_memory_write,
-                              node_memory_summarize, node_policy_learn)
+
 
 def node_evaluate(state):
     # TODO Wire into graphs
@@ -65,6 +67,7 @@ def node_evaluate(state):
     state.logs.append(f"Metrics:\n{payload}")
     return state
 
+
 # TODO Move to nodes.py
 def node_hint(state: RoundState) -> RoundState:
     chain = build_hint_chain(state.config)
@@ -73,12 +76,14 @@ def node_hint(state: RoundState) -> RoundState:
     state.logs.append(f"Hint: {hint.hint}")
     return state
 
+
 def node_guess(state: RoundState) -> RoundState:
     chain = build_guess_chain(state.config)
     guess = chain.invoke({"hints": [h.hint for h in state.hints]})
     state.guesses.append(guess)
     state.logs.append(f"Guess: {guess.guess}")
     return state
+
 
 def node_judge(state: RoundState) -> RoundState:
     chain = build_judge_chain(state.config)
@@ -87,6 +92,7 @@ def node_judge(state: RoundState) -> RoundState:
     state.judgment = judgment
     state.logs.append(f"Judged: correct={judgment.correct}, score={judgment.score}")
     return state
+
 
 def build_heads_up_graph() -> StateGraph:
     graph = StateGraph(RoundState)
@@ -99,6 +105,7 @@ def build_heads_up_graph() -> StateGraph:
     graph.add_edge("guess", "judge")
     graph.add_edge("judge", END)
     return graph
+
 
 def build_heads_up_graph_v2_experimental() -> StateGraph:
     graph = StateGraph(RoundState)
@@ -115,6 +122,7 @@ def build_heads_up_graph_v2_experimental() -> StateGraph:
 
     return graph
 
+
 def build_flip_script_graph() -> StateGraph:
     graph = StateGraph(RoundState)
     # In flip-script, the reference model guesses with minimal context (word category, etc.)
@@ -126,17 +134,20 @@ def build_flip_script_graph() -> StateGraph:
     graph.add_edge("judge", END)
     return graph
 
+
 def run_heads_up_round(word: str, provider_name: str = "openai", compress_hints: bool = True) -> RoundState:
     cfg = RoundConfig(mode=GameMode.HEADS_UP, word=word, provider_name=provider_name, compress_hints=compress_hints)
     state = RoundState(config=cfg)
     app = build_heads_up_graph().compile()
     return app.invoke(state)
 
+
 def run_flip_script_round(word: str, provider_name: str = "openai") -> RoundState:
     cfg = RoundConfig(mode=GameMode.FLIP_SCRIPT, word=word, provider_name=provider_name)
     state = RoundState(config=cfg)
     app = build_flip_script_graph().compile()
     return app.invoke(state)
+
 
 def build_heads_up_graph_with_rag() -> StateGraph:
     graph = StateGraph(RoundState)
@@ -153,6 +164,7 @@ def build_heads_up_graph_with_rag() -> StateGraph:
     graph.add_edge("guess", "judge")
     graph.add_edge("judge", END)
     return graph
+
 
 def build_heads_up_graph_with_eval() -> StateGraph:
     graph = StateGraph(RoundState)
@@ -172,11 +184,13 @@ def build_heads_up_graph_with_eval() -> StateGraph:
     graph.add_edge("evaluate", END)
     return graph
 
+
 def run_heads_up_round_with_eval(word: str, provider_name: str = "openai") -> RoundState:
     cfg = RoundConfig(mode="heads_up", word=word, provider_name=provider_name, compress_hints=True)
     state = RoundState(config=cfg)
     app = build_heads_up_graph_with_eval().compile()
     return app.invoke(state)
+
 
 def build_flip_script_graph_with_eval() -> StateGraph:
     graph = StateGraph(RoundState)
@@ -190,23 +204,28 @@ def build_flip_script_graph_with_eval() -> StateGraph:
     graph.add_edge("evaluate", END)
     return graph
 
+
 def run_flip_script_round_with_eval(word: str, provider_name: str = "openai") -> RoundState:
     cfg = RoundConfig(mode="flip_script", word=word, provider_name=provider_name)
     state = RoundState(config=cfg)
     app = build_flip_script_graph_with_eval().compile()
     return app.invoke(state)
 
+
 def run_heads_up_round_with_rag(word: str, provider_name: str = "openai") -> RoundState:
     # Reuse existing RoundConfig/RoundState from Phase 5
     from app.engine.state import RoundConfig
+
     cfg = RoundConfig(mode=GameMode.HEADS_UP, word=word, provider_name=provider_name, compress_hints=True)
     state = RoundState(config=cfg)
     app = build_heads_up_graph_with_rag().compile()
     return app.invoke(state)
 
+
 # TODO: Move to these to another file. Maybe orchestration.py
 def _summarize_state(state: RoundState) -> str:
     return f"hints={len(state.hints)} guesses={len(state.guesses)} judged={'yes' if state.judgment else 'no'}"
+
 
 def node_orchestrate(state: RoundState) -> RoundState:
     router = build_orchestrator()
@@ -216,12 +235,14 @@ def node_orchestrate(state: RoundState) -> RoundState:
     state.config.mode = f"agent:{decision}"
     return state
 
+
 def node_hint_agent(state: RoundState) -> RoundState:
     chain = build_hint_agent(state.config.provider_name)
     out = chain.invoke({})
     state.hints.append(out)
     state.logs.append(f"Hint agent: {out.hint}")
     return state
+
 
 def node_guess_agent(state: RoundState) -> RoundState:
     chain = build_guess_agent(state.config.provider_name)
@@ -230,6 +251,7 @@ def node_guess_agent(state: RoundState) -> RoundState:
     state.logs.append(f"Guess agent: {out.guess} ({out.confidence:.2f})")
     return state
 
+
 def node_judge_agent(state: RoundState) -> RoundState:
     chain = build_judge_agent(state.config.provider_name)
     latest = state.guesses[-1]
@@ -237,6 +259,7 @@ def node_judge_agent(state: RoundState) -> RoundState:
     state.judgment = out
     state.logs.append(f"Judge agent: correct={out.correct} score={out.score:.2f}")
     return state
+
 
 def node_evaluate_tool(state: RoundState) -> RoundState:
     inp = RoundEvaluationInput(
@@ -250,6 +273,7 @@ def node_evaluate_tool(state: RoundState) -> RoundState:
     state.metrics = res
     state.logs.append(f"Evaluate tool: {res.feedback}")
     return state
+
 
 def build_multi_agent_graph() -> StateGraph:
     graph = StateGraph(RoundState)
@@ -273,12 +297,14 @@ def build_multi_agent_graph() -> StateGraph:
     graph.add_edge("evaluate", END)
     return graph
 
+
 def run_multi_agent_round(word: str, provider_name: str = "openai") -> RoundState:
     # TODO This line is deprecated. Add its own enum
     cfg = RoundConfig(mode="multi_agent", word=word, provider_name=provider_name, compress_hints=True)
     state = RoundState(config=cfg)
     app = build_multi_agent_graph().compile()
     return app.invoke(state)
+
 
 def build_multi_agent_graph_with_memory() -> StateGraph:
     graph = StateGraph(RoundState)
@@ -304,10 +330,12 @@ def build_multi_agent_graph_with_memory() -> StateGraph:
     graph.add_edge("judge", "mem_write")
     return graph
 
+
 async def run_multi_agent_round_with_memory(word: str, provider_name: str = "openai") -> RoundState:
     state = RoundState(config=RoundConfig(mode="multi_agent_mem", word=word, provider_name=provider_name))
     app = build_multi_agent_graph_with_memory().compile()
     return app.invoke(state)
+
 
 def build_multi_agent_graph_with_learning() -> StateGraph:
     graph = StateGraph(RoundState)
@@ -331,8 +359,10 @@ def build_multi_agent_graph_with_learning() -> StateGraph:
     graph.add_edge("policy_learn", END)
     return graph
 
+
 def run_multi_agent_round_with_learning(word: str, provider_name: str = "openai") -> RoundState:
     from app.engine.state import RoundConfig
+
     state = RoundState(config=RoundConfig(mode="multi_agent_learn", word=word, provider_name=provider_name))
     app = build_multi_agent_graph_with_learning().compile()
     return app.invoke(state)

@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
+
 import pytest
-from sqlmodel import SQLModel
-from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel
+from sqlmodel.ext.asyncio.session import AsyncSession
+
 from app.repositories.words import add_word, get_curated_words
+
 
 @pytest.fixture
 async def session():
@@ -20,6 +22,7 @@ async def session():
         await conn.run_sync(SQLModel.metadata.create_all)
     async with async_session() as s:
         yield s
+
 
 @pytest.mark.asyncio
 async def test_add_and_get_word(session):

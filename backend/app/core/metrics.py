@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
+
 from dataclasses import dataclass
+
 
 # TODO Move other metrics here. Including performance metrics.
 @dataclass

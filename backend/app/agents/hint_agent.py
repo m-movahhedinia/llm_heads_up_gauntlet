@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from langchain_openai import ChatOpenAI
+
+from langchain_core.output_parsers.pydantic import PydanticOutputParser
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.tools import tool
-from langchain_core.output_parsers.pydantic import PydanticOutputParser
-from app.agents.schemas import HintOutput
-from app.knowledge.rag import build_faiss_rag_hint_chain
-from app.knowledge.processors import build_hint_compressor
+
 from app.agents.llm_provider import ProviderFactory
+from app.agents.schemas import HintOutput
+from app.knowledge.processors import build_hint_compressor
+from app.knowledge.rag import build_faiss_rag_hint_chain
+
 
 @tool
 def rag_hint_tool(question: str) -> str:
@@ -20,11 +21,13 @@ def rag_hint_tool(question: str) -> str:
     chain = build_faiss_rag_hint_chain()
     return chain.invoke(question)
 
+
 @tool
 def compress_hint_tool(text: str) -> str:
     """Compress a hint using LLMLingua 2."""
     comp = build_hint_compressor()
     return comp.invoke(text)
+
 
 def build_hint_agent(provider_name: str):
     llm = ProviderFactory.get_provider(provider_name)

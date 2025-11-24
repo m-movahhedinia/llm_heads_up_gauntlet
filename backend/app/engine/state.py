@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
 
-from pydantic import BaseModel, Field
-from typing import List, Optional
-from app.agents.schemas import HintOutput, GuessOutput, JudgeOutput
-
 from enum import Enum
+
+from pydantic import BaseModel
+
+from app.agents.schemas import GuessOutput, HintOutput, JudgeOutput
 
 
 class GameMode(Enum):
     HEADS_UP = "heads_up"
     FLIP_SCRIPT = "flip_script"
+
 
 class RoundConfig(BaseModel):
     mode: GameMode
@@ -26,10 +26,11 @@ class RoundConfig(BaseModel):
     temperature: float = 0.7
     max_tokens: int = 256
 
+
 class RoundState(BaseModel):
     config: RoundConfig
-    hints: List[HintOutput] = []
-    compressed_hints: List[str] = []
-    guesses: List[GuessOutput] = []
-    judgment: Optional[JudgeOutput] = None
-    logs: List[str] = []
+    hints: list[HintOutput] = []
+    compressed_hints: list[str] = []
+    guesses: list[GuessOutput] = []
+    judgment: JudgeOutput | None = None
+    logs: list[str] = []

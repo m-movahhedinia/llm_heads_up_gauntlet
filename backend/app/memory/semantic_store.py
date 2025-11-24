@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from typing import List
+
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain_pinecone import PineconeVectorStore
 from langchain_core.prompts.prompt import PromptTemplate
+from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from langchain_openai import ChatOpenAI
-from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+from langchain_pinecone import PineconeVectorStore
+
 from app.memory.schemas import MemoryItem
 
 SummaryPrompt = PromptTemplate(
@@ -25,7 +25,8 @@ SummaryPrompt = PromptTemplate(
     input_variables=["context", "word"],
 )
 
-def build_faiss_memory_chain(items: List[MemoryItem]):
+
+def build_faiss_memory_chain(items: list[MemoryItem]):
     texts = [f"{i.kind.upper()}: {i.content}" for i in items]
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     store = FAISS.from_texts(texts, embeddings)
@@ -39,7 +40,8 @@ def build_faiss_memory_chain(items: List[MemoryItem]):
     )
     return chain
 
-def build_pinecone_memory_chain(index_name: str, items: List[MemoryItem]):
+
+def build_pinecone_memory_chain(index_name: str, items: list[MemoryItem]):
     texts = [f"{i.kind.upper()}: {i.content}" for i in items]
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     store = PineconeVectorStore.from_texts(texts, embeddings, index_name=index_name)

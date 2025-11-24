@@ -13,8 +13,7 @@ from uvicorn import run
 from ..core.config import settings
 from ..core.logging import configure_logging
 from ..utils.health import health_status
-
-from .routes import words, games, leaderboard
+from .routes import games, leaderboard, words
 
 configure_logging()
 

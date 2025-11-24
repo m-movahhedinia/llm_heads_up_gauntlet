@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
+
 from pydantic import BaseModel, Field
+
 
 # TODO Make this more generic
 class SafeGenParams(BaseModel):

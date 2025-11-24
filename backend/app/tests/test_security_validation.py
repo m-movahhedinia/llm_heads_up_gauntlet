@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
 
 from app.core.validation import SafeGenParams
-import pytest
+
 
 def test_param_clamp():
     p = SafeGenParams(temperature=3.0, top_k=100, max_tokens=99999)

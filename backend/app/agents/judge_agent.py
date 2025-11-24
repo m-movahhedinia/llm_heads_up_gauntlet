@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts.prompt import PromptTemplate
+
 from langchain_core.output_parsers.pydantic import PydanticOutputParser
-from app.agents.schemas import JudgeOutput
+from langchain_core.prompts.prompt import PromptTemplate
+
 from app.agents.llm_provider import ProviderFactory
+from app.agents.schemas import JudgeOutput
+
 
 def build_judge_agent(provider_name: str):
     llm = ProviderFactory.get_provider(provider_name)

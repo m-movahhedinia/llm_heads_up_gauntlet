@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
 
 from fastapi import APIRouter
+
 from app.models.schemas import LeaderboardEntry
 
 router = APIRouter(prefix="/leaderboard", tags=["leaderboard"])

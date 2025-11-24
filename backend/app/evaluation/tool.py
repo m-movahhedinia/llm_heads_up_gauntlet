@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from typing import Any, Dict
-from langchain_openai import ChatOpenAI
+
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.tools import tool
-from langchain_core.runnables import RunnableLambda
-from langchain_core.output_parsers import PydanticOutputParser
-from app.evaluation.schemas import RoundEvaluationInput, RoundEvaluationResult
+from langchain_openai import ChatOpenAI
+
 from app.evaluation.metrics import evaluate_round
+from app.evaluation.schemas import RoundEvaluationInput, RoundEvaluationResult
+
 
 @tool
 def evaluate_round_tool(input_: RoundEvaluationInput) -> RoundEvaluationResult:
     """Evaluate a game round for accuracy, calibration, creativity, and efficiency."""
     return evaluate_round(input_)
+
 
 def build_evaluator_agent():
     llm = ChatOpenAI(model="gpt-4o-mini")
@@ -33,6 +33,7 @@ def build_evaluator_agent():
     # Compose LCEL: system prompt -> llm with tools
     agent = system | llm.bind_tools([evaluate_round_tool])
     return agent
+
 
 def run_evaluation_via_agent(inp: RoundEvaluationInput) -> RoundEvaluationResult:
     agent = build_evaluator_agent()

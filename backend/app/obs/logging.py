@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from loguru import logger
+
 import os
 import sys
+
+from loguru import logger
+
 
 def setup_logging():
     level = os.getenv("LOG_LEVEL", "INFO")

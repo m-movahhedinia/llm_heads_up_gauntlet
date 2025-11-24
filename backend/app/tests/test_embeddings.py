@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
+
 from app.knowledge.embeddings import get_embedding_provider
+
 
 def test_embedding_provider():
     provider = get_embedding_provider()

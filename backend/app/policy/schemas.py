@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+
 
 class Policy(BaseModel):
     # LLM generation knobs
@@ -20,13 +19,15 @@ class Policy(BaseModel):
     # Calibration knobs
     confidence_bias: float = Field(ge=-0.5, le=0.5, default=0.0)
 
+
 class PolicyUpdateInput(BaseModel):
     policy: Policy
     accuracy: float = Field(ge=0.0, le=1.0)
     calibration: float = Field(ge=0.0, le=1.0)
     creativity: float = Field(ge=0.0, le=1.0)
     efficiency: float = Field(ge=0.0, le=1.0)
-    summary_signals: Optional[str] = None  # optional memory summary text
+    summary_signals: str | None = None  # optional memory summary text
+
 
 class PolicyUpdateOutput(BaseModel):
     new_policy: Policy

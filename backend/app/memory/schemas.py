@@ -1,28 +1,30 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
-from pydantic import BaseModel, Field
-from typing import List, Optional
+
 from datetime import datetime
+
+from pydantic import BaseModel, Field
+
 
 class MemoryItem(BaseModel):
     # TODO Make this an enum
     kind: str = Field(pattern="^(hint|guess|judge|eval|summary)$")
     content: str
     word: str
-    confidence: Optional[float] = None
-    correct: Optional[bool] = None
-    score: Optional[float] = None
+    confidence: float | None = None
+    correct: bool | None = None
+    score: float | None = None
     timestamp: datetime = Field(default_factory=datetime.utcnow)
+
 
 class MemorySummary(BaseModel):
     word: str
-    key_signals: List[str] = []
-    best_hint_patterns: List[str] = []
-    common_mistakes: List[str] = []
-    calibration_note: Optional[str] = None
+    key_signals: list[str] = []
+    best_hint_patterns: list[str] = []
+    common_mistakes: list[str] = []
+    calibration_note: str | None = None
     updated_at: datetime = Field(default_factory=datetime.utcnow)

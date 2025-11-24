@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""
-Author: mansour
+"""Author: mansour
 
 Description:
 
 """
+
 import os
+
 from pydantic import BaseModel, Field
+
 
 # TODO Deprecated, move to config
 class Secrets(BaseModel):
@@ -18,5 +20,6 @@ class Secrets(BaseModel):
         missing = [k for k, v in self.model_dump().items() if not v]
         if missing:
             raise RuntimeError(f"Missing secrets: {missing}")
+
 
 secrets = Secrets()
