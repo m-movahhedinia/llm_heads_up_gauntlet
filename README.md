@@ -12,9 +12,9 @@ Two complementary modes highlight different aspects of LLM reasoning:
 - **Heads Up! Mode**
     - A reference model or a human receives a word.
     - It generates hints.
-    - Other models and possibly a human attempt to guess the word.
+    - Models being tested and possibly a human attempt to guess the word.
 - **Reverse Mode (Flip the Script)**
-    - Models and possibly a human receive the word.
+    - Models being tested and possibly a human receive the word.
     - They generate hints.
     - The reference model or a human attempts to guess the word.
 
