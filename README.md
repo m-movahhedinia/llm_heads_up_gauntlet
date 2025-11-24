@@ -1,5 +1,6 @@
+![Status: Incomplete](https://img.shields.io/badge/Status-Incomplete-red)
 # Multi-Agent LLM Heads Up Gauntlet
-<font color="red"><b>This is an incomplete and ongoing project.</b></font>
+### ⚠️ **This is an incomplete and ongoing project.**
 ## Overview
 
 This project is a **multi-agent game platform** designed to pit large language models (LLMs) against one another and against humans in a playful yet technically rigorous format. Inspired by the *Heads Up!* game, the system showcases advanced **agentic LLM orchestration**, **evaluation frameworks**, and **human-in-the-loop interaction**.
