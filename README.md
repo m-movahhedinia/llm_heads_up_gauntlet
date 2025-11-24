@@ -1,5 +1,5 @@
 # Multi-Agent LLM Heads Up Gauntlet
-### This is an incomplete and ongoing project.
+<h3 style="color:red">This is an incomplete and ongoing project.</h3>
 ## Overview
 
 This project is a **multi-agent game platform** designed to pit large language models (LLMs) against one another and against humans in a playful yet technically rigorous format. Inspired by the *Heads Up!* game, the system showcases advanced **agentic LLM orchestration**, **evaluation frameworks**, and **human-in-the-loop interaction**.
